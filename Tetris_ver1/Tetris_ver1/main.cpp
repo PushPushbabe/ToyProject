@@ -1,5 +1,7 @@
 #include <iostream>
 #include "DrawBlock.h"
+#include <conio.h>
+#include <Windows.h>
 
 using namespace std;
 
@@ -17,6 +19,8 @@ int main()
 	int * ptr_grid;
 	int ** rptr_grid= &ptr_grid;
 	int indexer = 0;
+	int key;
+	bool flag=1;
 	DrawLong LongBlock;
 
 
@@ -31,25 +35,49 @@ int main()
 
 	cout << "row " << row<<endl;
 	cout << "col " << col<<endl;
+	cout << "maxlength" << maxleng << endl;
+	LongBlock.InitDrawLong(ptr_grid, row, col);
+	while (1) {
+			Sleep(1000);
 
-	getchar();
+		LongBlock.MoveDown();
+		LongBlock.PrintBlock();
+		
+		//¸¶Áö¸· À§Ä¡¸¦ 0À¸·Î ¹Ù²Ù´Â°Í ¿ÞÂÊ ¿À¸¥ÂÊ ÀÌµ¿¿¡ ´ëÇÑ °íÂûÀÌ ÇÊ¿ä
+		//cout << "kbhit °ª" << _kbhit << endl;
+		if (_kbhit()) {
+		key = _getch();
+		if (key == 224)
+		{
+			key = _getch();
+			switch (key)
+			{
+			case 75:
+				//cout << "µÇ°íÀÖ´Ù°í";
+				LongBlock.MoveLeft();	
+				LongBlock.PrintBlock();
+				break;
+				
+				
 
-	//LongBlock.InitDrawLong(ptr_grid, row, col);
-	//system("cls");
+			}
 
-	//for (int i = 0;i < col;i++)
-	//{
-	//	for (int j = 0;j < row;j++)
-	//	{
-	//		cout << ptr_grid[indexer];
-	//		indexer++;
-	//	}cout << endl;
+		}
+		//Sleep(10000);
+		}
+		system("cls");
+		indexer = 0;
+		for (int i = 0;i < col;i++)
+		{
+			for (int j = 0;j < row;j++)
+			{
+				cout << ptr_grid[indexer];
+				indexer++;
+			}cout << endl;
+		}
+	}
 	//}
-
-
-	//DrawGrid(maxleng);
 	
-
 
 	return 0;
 }
@@ -76,7 +104,9 @@ int InitGrid(int maxleng, FILE * file, int& row, int** rptr_grid) //ÆÄÀÏ¿¡¼­ ÀÐ¾
 	int  col;
 
 	fseek(file, 0, SEEK_SET);
-	result = fread(buffer, 1, maxleng * sizeof(char), file);
+	memset(*rptr_grid, 0, int_maxleng);
+	memset(buffer, 0, maxleng);
+	result = fread_s(buffer, maxleng,maxleng,1, file);
 	for (i = 0;i < maxleng;i++)
 	{
 		if (buffer[i] == '1' || buffer[i] == '0' || buffer[i] == '2' || buffer[i] == '3')
@@ -84,15 +114,18 @@ int InitGrid(int maxleng, FILE * file, int& row, int** rptr_grid) //ÆÄÀÏ¿¡¼­ ÀÐ¾
 			int_maxleng++;
 		}
 	}
-
-	int_buffer = new int[int_maxleng + 1];
-	memset(int_buffer, 0, int_maxleng + 1);
+	
+	int_buffer = new int[int_maxleng];
+	memset(int_buffer, 0, int_maxleng);
+	
 	*rptr_grid = int_buffer;
-	do {
+		i = 0;
+	 while (buffer[i] != '\n') {
+
 		if (buffer[i] == '1' || buffer[i] == '0' || buffer[i] == '2' || buffer[i] == '3')
-			count_row++;
+			count_row += 1;
 		i++;
-	} while (buffer[i] != '\n');
+	}
 
 
 	for (i = 0;i < maxleng;i++)
@@ -124,7 +157,7 @@ int InitGrid(int maxleng, FILE * file, int& row, int** rptr_grid) //ÆÄÀÏ¿¡¼­ ÀÐ¾
 	}
 
 	row = count_row;
-	col = indexer / count_row;
+	col = indexer / row;
 	indexer = 0;
 	for (i = 0;i < col;i++)
 	{
