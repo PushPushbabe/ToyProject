@@ -2,22 +2,22 @@
 
 using namespace std;
 
-class DrawBlock
+class DrawBlock  //테트리스 블럭 부모클래스
 {
 protected: 
 	int xPos;
 	int yPos;
 	int row;
 	int col;
-	int * grid;
-	virtual void PrintBlock()=0;
-	virtual void RotateBlock() = 0;
-	virtual void MoveDown() = 0;
-	virtual void MoveLeft() = 0;
-	virtual void MoveRight() = 0;
-	DrawBlock();
-	virtual ~DrawBlock();
-	
+	int * grid;	
+	DrawBlock(); //생성자
+	virtual ~DrawBlock();  //상속클래스 소멸자 호출용도 소멸자 정의
+public:
+	void RotateBlock();	//멤버함수를 자식클래스에서도 사용할 수 있게 하려면 public으로 선언해야한다.
+	void MoveLeft();
+	void MoveRight();
+	void MoveDown();
+	void PrintBlock();
 };
 
 DrawBlock::DrawBlock()
@@ -25,13 +25,57 @@ DrawBlock::DrawBlock()
 
 }
 
-DrawBlock::~DrawBlock()
+DrawBlock::~DrawBlock() 
 {
 
 }
 
+void DrawBlock ::MoveLeft()
+{
+	for (int i = 0; i < 4; i++)
+	{	
+		grid[xPos + i + (yPos* row)] = 0;		
+	}
+	if(grid[xPos-1 + (yPos* row)] != 1)
+		xPos -= 1;
+}
 
-class DrawRightBend : DrawBlock
+void DrawBlock ::MoveRight()
+{
+	for (int i = 0; i < 4; i++)
+	{		
+		grid[xPos + i + (yPos* row)] = 0;		
+	}
+	if (grid[xPos+4+ (yPos* row)] != 1)
+		xPos += 1;
+}
+
+
+void DrawBlock ::MoveDown()
+{
+	for (int i = 0; i < 4; i++)
+	{		
+		grid[xPos + i + (yPos*row)] = 0;		
+	}	
+	if (grid[xPos + ((yPos+1)* row)] != 1)
+		yPos += 1;
+}
+
+
+void DrawBlock ::PrintBlock()
+{
+	for (int i = 0; i < 4; i++)
+	{		
+		grid[xPos + i + (yPos*row)] = 3;		
+	}
+
+}
+void DrawBlock::RotateBlock()
+{
+	cout << "Rotate" << endl;
+}
+
+class DrawRightBend : DrawBlock   //기역자 모양 블록 모양 블록 클래스
 {
 public :
 	DrawRightBend();
@@ -40,7 +84,7 @@ public :
 
 };
 
-class DrawLeftBend : DrawBlock
+class DrawLeftBend : DrawBlock   //니은자 모양 블록 모양 블록 클래스
 {
 public:
 	DrawLeftBend();
@@ -50,7 +94,7 @@ public:
 };
 
 
-class DrawCross : DrawBlock
+class DrawCross : DrawBlock    //십자모양 절반 모양 블록 클래스
 {
 public:
 	DrawCross();
@@ -59,17 +103,12 @@ public:
 
 };
 
-class DrawLong : DrawBlock
+class DrawLong : public DrawBlock	//길쭉한 블록 클래스, 부모포인터로 업캐스팅 하려면 public이 필요하다.
 {
 public:
 	DrawLong();
 	DrawLong(int * grid, int row, int col);
 	void InitDrawLong(int * grid, int row, int col);
-	virtual void PrintBlock();
-	virtual void RotateBlock();
-	virtual void MoveDown();
-	virtual void MoveLeft();
-	virtual void MoveRight();
 };
 
 DrawLong::DrawLong()
@@ -93,50 +132,4 @@ void DrawLong::InitDrawLong(int * grid, int row, int col)
 	this->col = col;
 	this->xPos = (row / 2) - 2;
 	this->yPos = 1;
-}
-
-void DrawLong::MoveLeft()
-{
-	
-	for (int i = 0; i < 4; i++)
-		this->grid[xPos + i + (yPos*row)] = 0;		
-
-	this->xPos -= 1;
-	cout << "xPos" << xPos<<endl;
-	
-	
-
-}
-
-void DrawLong::MoveRight()
-{
-	for (int i = 0; i < 4; i++)
-		this->grid[xPos + i + (yPos*row)] = 0;
-	this->xPos = +1;
-
-}
-
-
-void DrawLong::MoveDown()
-{
-	for (int i = 0; i < 4; i++)
-	{		this->grid[xPos + i + (yPos*row)] = 0;
-			//cout << "index " << xPos + i + (yPos*row) << endl;
-	}
-	cout << "xPos" << xPos << endl;
-	this->yPos += 1;
-}
-
-void DrawLong::PrintBlock()
-{
-	for (int i = 0; i < 4; i++) {
-	this->grid[xPos + i +(yPos*row)] = 3;
-	cout << "index " << xPos + i + (yPos*row) << endl;
-	}
-
-}
-
-void DrawLong::RotateBlock()
-{
-
 }

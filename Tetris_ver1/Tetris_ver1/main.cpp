@@ -40,9 +40,12 @@ int main()
 	while (1) {
 			Sleep(1000);
 
-		LongBlock.MoveDown();
-		LongBlock.PrintBlock();
+		DrawBlock * BlockPtr = &LongBlock; //부모 클래스 포인터로 자식들을 가리키게 해서 하나로 가리킬 수 있음
+		(*BlockPtr).MoveDown();
+		(*BlockPtr).PrintBlock();
 		
+		//블럭 부모클래스의 포인터를 업캐스팅 해서 회전하도록 하는 것도 괜찮은 방법이겠다.
+
 		//마지막 위치를 0으로 바꾸는것 왼쪽 오른쪽 이동에 대한 고찰이 필요
 		//cout << "kbhit 값" << _kbhit << endl;
 		if (_kbhit()) {
@@ -54,12 +57,15 @@ int main()
 			{
 			case 75:
 				//cout << "되고있다고";
-				LongBlock.MoveLeft();	
-				LongBlock.PrintBlock();
+				(*BlockPtr).MoveLeft();
+				(*BlockPtr).PrintBlock();
 				break;
-				
-				
-
+			case 77:
+				(*BlockPtr).MoveRight();
+				(*BlockPtr).PrintBlock();
+				break;
+			case 72 :
+				(*BlockPtr).RotateBlock();
 			}
 
 		}
